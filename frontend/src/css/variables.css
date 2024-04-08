@@ -1,0 +1,24 @@
+:root {
+  /* TYPOGRAPHY */
+  --text-color: #292929;
+  --font-size: 16px;
+  --link-text-color: #1a5a96;
+  --link-text-color-hover: #2378c7;
+
+  /* COLOURS */
+  --white: #fff;
+  --black: #000;
+  --grey: #8d8d8d;
+  --transparent-black: rgba(41, 41, 41, 0.5);
+  --transparent-grey: rgba(97, 97, 97, 0.5);
+  --light-grey: #faf9f8;
+  --light-grey2: #edebe9;
+  --light-grey3: #d8d8d8;
+  --light-grey4: #fcfcfc;
+  --blue-grey: #f6f9fc;
+  --dark-grey: #323130;
+  --bcgov-yellow: #FCBA19;
+  --bcgov-blue: #234075;
+  --bcgov-light-blue: #1a5a96;
+  --bcgov-dark-blue: #036;
+}

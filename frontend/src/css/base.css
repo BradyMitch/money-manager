@@ -1,0 +1,33 @@
+@import './reset.css';
+@import './variables.css';
+@import './modifiers.css';
+
+body {
+  margin: 0;
+  font-family: Calibri, Arial, sans-serif;
+  font-size: var(--font-size);
+  color: var(--text-color);
+  background-color: var(--light-grey);
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.75em;
+}
+
+h3 {
+  font-size: 1.45em;
+}
+
+h4 {
+  font-size: 1.2em;
+}
+
+hr {
+  border-top: 2px solid var(--light-grey3);
+  margin-top: 10px;
+  margin-bottom: 20px;
+}

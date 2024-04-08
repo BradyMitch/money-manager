@@ -1,0 +1,74 @@
+services:
+  money-frontend:
+    container_name: money-frontend
+    tty: true
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+      args:
+        - NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-21.5-bullseye-slim} # Node image tag
+    ports:
+      - ${FRONTEND_PORT:-7500}:7500
+    volumes:
+      - ./frontend/src:/app/src
+      - /app/node_modules
+    depends_on:
+      money-api:
+        condition: service_healthy
+    networks:
+      - money-app-network
+
+  money-api:
+    container_name: money-api
+    tty: true
+    init: true # Properly handles running as PID 1 inside a container. Source: https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#handling-kernel-signals
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "node", "/app/scripts/healthcheck.js"] # Check health endpoint for healthy service.
+      interval: 30s # Perform the health check every 30 seconds.
+      timeout: 10s # Consider the health check a failure if it takes more than 10 seconds.
+      retries: 5 # Retry the health check up to 5 times before considering the container unhealthy.
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+      args:
+        - NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-21.5-bullseye-slim} # Node image tag
+    env_file: .env
+    ports:
+      - ${BACKEND_PORT:-7600}:7600
+    volumes:
+      - ./backend:/app
+    networks:
+      - money-app-network
+    depends_on:
+      money-database:
+        condition: service_healthy
+
+  money-database:
+    container_name: money-database
+    tty: true
+    image: postgres:15.2-alpine
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-postgres}"] # Check if PostgreSQL is ready.
+      interval: 15s # Perform the health check every 15 seconds.
+      timeout: 5s # Consider the health check a failure if it takes more than 5 seconds.
+      retries: 5 # Retry the health check up to 5 times before considering the container unhealthy.
+    environment:
+      - POSTGRES_USER=${DATABASE_USER:-postgres}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-postgres}
+      - POSTGRES_DB=${DATABASE_NAME:-db}
+    networks:
+      - money-app-network
+    ports:
+      - ${DATABASE_PORT:-9005}:5432
+    volumes:
+      - database-data:/var/lib/postgresql/data # Named volume binded to Postgres' data store directory.
+
+networks:
+  money-app-network:
+    driver: "bridge"
+
+volumes:
+  database-data:
+    driver: local # Stores the volume data on the host machine's file system.

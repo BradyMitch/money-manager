@@ -1,0 +1,15 @@
+{
+  "name": "money-manager",
+  "scripts": {
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "prune": "docker compose down --rmi all --volumes",
+    "install": "npm run install:frontend && npm run install:backend",
+    "install:frontend": "cd frontend && rm -rf node_modules package-lock.json && npm i",
+    "install:backend": "cd backend && rm -rf node_modules package-lock.json && npm i",
+    "rebuild": "npm run prune && npm run install && npm run up",
+    "shell:frontend": "docker exec -it money-frontend sh",
+    "shell:backend": "docker exec -it money-api sh",
+    "setup-git-aliases": "node scripts/setupGitAliases"
+  }
+}
